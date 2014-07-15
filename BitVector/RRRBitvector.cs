@@ -43,7 +43,7 @@ namespace BitVectors
         private ulong size1_;   // Total number of set bits
 
         // B. Pre-defined Constants:
-        //      BLOCK_SIZE: a natural number, typically 2^k for some small k.
+        //      BLOCK_SIZE: a natural number, typically 2^k - 1 for some small k.
         //      In this specific implementation, we fix BLOCK_SIZE = 63 and
         //      name it "t" for notational bravity:
         //          t = BLOCK_SIZE = 63
