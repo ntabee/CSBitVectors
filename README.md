@@ -11,17 +11,17 @@ a bit vector augmented with an "index", such that
 - the size of the index is "insignificant" compared to that of the vector itself,
 - the index is exploited to answer the following queries in sublinear time:
   1. _rank_: returns the number of 0s or 1s within a given range of the vector   
-```
-  rank : BitVector -> Nat -> {0, 1} -> Nat
-  rank vec k b = |{i | i <- [0, ..., k) vec[i] = b }|
-```
-  (N.B. The above claims the specified range is _exclusive_: `i<- [0, ..., k)`,
-   some formalisms instead employ _inclusive_ definition for a range: `i <- [0, ..., k]`)
+    ```
+      rank : BitVector -> Nat -> {0, 1} -> Nat
+      rank vec k b = |{i | i <- [0, ..., k) vec[i] = b }|
+    ```
+    (N.B. The above claims the specified range is _exclusive_: `i<- [0, ..., k)`,
+     some formalisms instead employ _inclusive_ definition for a range: `i <- [0, ..., k]`)
   2. _select_: returns the position of the _k_-th occurrence of 0 or 1: 
-````
-  select : BitVector -> Nat -> {0, 1} -> Nat
-  select vec k b = i such that vec[i] = b && rank vec (i+1) b = k
-````
+    ````
+      select : BitVector -> Nat -> {0, 1} -> Nat
+      select vec k b = i such that vec[i] = b && rank vec (i+1) b = k
+    ````
 
 This Implementation Offers:
 ---
@@ -36,18 +36,18 @@ For both representations, an instance is built from a plain-vanilla bit sequence
 stored in the helper class `Bits`:
 
 1. Load your bulk data into a list of bytes: 
-```cs
-IList<byte> bulk = /* ...my precious... */;
-```
+  ```cs
+  IList<byte> bulk = /* ...my precious... */;
+  ```
 2. Instantiate a `Bits` and copy the bulk:
-```cs
-Bits bits = new Bits(bulk.Length / 8 /* is the initial capacity */);
-bits.push(bulk);
-```
+  ```cs
+  Bits bits = new Bits(bulk.Length / 8 /* is the initial capacity */);
+  bits.push(bulk);
+  ```
 3. Build a bit vector from `bits`:
-```cs
-(RRR)BitVector bv = new (RRR)BitVector(bits);
-```
+  ```cs
+  (RRR)BitVector bv = new (RRR)BitVector(bits);
+  ```
 
 Supported operations are:
 
