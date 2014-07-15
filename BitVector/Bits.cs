@@ -182,6 +182,12 @@ namespace BitVectors
             return (b) ? push1s(nbits) : push0s(nbits);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Bits push(bool b)
+        {
+            return (b) ? push1s(1) : push0s(1);
+        }
+
         private ulong internalFetch64(ulong pos, int nbits)
         {
             if (nbits == 0)
