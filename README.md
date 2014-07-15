@@ -44,7 +44,6 @@ IList<byte> bulk = /* ...my precious... */;
 Bits bits = new Bits(bulk.Length / 8 /* is the initial capacity */);
 bits.push(bulk);
 ```
-
 3. Build a bit vector from `bits`:
 ```cs
 (RRR)BitVector bv = new (RRR)BitVector(bits);
