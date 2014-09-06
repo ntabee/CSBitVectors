@@ -163,6 +163,32 @@ namespace BitVectors
             size_ = bits.size();
             build();
         }
+        public BitVector(IList<byte> bytes)
+        {
+            v_ = new List<ulong>();
+            r_ = new List<ulong>();
+
+            ulong val = 0UL;
+            ulong i = 0;
+            foreach (byte b in bytes)
+            {
+                val = (val << 8) | b;
+                ++i;
+                if (i % 8 == 0)
+                {
+                    v_.Add(reverseBits(val));
+                }
+            }
+            if (i % 8 > 0)
+            {
+                v_.Add(reverseBits(val));
+                val = 0UL;
+            }
+            size_ = i*8;
+            build();
+            
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public BitVector clear()
         {

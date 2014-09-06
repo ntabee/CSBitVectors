@@ -141,7 +141,7 @@ namespace BitVectors
         public Bits push(IList<byte> l) 
         {
             foreach (byte v in l) {
-                push(v, sizeof(byte));
+                push(v, sizeof(byte)*8);
             }
             return this;
         }

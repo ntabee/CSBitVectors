@@ -236,6 +236,32 @@ namespace BitVector_Test
 
         }
         [TestMethod]
+        public void fromBytes()
+        {
+            const uint LEN = 10000;
+            byte[] bytes = new byte[LEN];
+
+            Random rand = new Random();
+            rand.NextBytes(bytes);
+
+            Bits bits = new Bits(LEN);
+            bits.push(bytes);
+
+            BitVector bv1 = new BitVector(bytes);
+            BitVector bv2 = new BitVector(bits);
+
+            Assert.IsTrue(bv1.size() == bv2.size(), string.Format("Sizes mismatch"));
+            for (ulong i = 0; i < LEN; i++)
+            {
+                Assert.IsTrue(bv1.get(i) == bv2.get(i), string.Format("Faild at {0}.", i));
+                Assert.IsTrue(bv1.select(i, true) == bv2.select(i, true), string.Format("Faild at {0}.", i));
+                Assert.IsTrue(bv1.select(i, false) == bv2.select(i, false), string.Format("Faild at {0}.", i));
+                Assert.IsTrue(bv1.rank(i, true) == bv2.rank(i, true), string.Format("Faild at {0}.", i));
+                Assert.IsTrue(bv1.rank(i, false) == bv2.rank(i, false), string.Format("Faild at {0}.", i));
+            }
+        }
+
+        [TestMethod]
         public void regressAll()
         {
             size();
