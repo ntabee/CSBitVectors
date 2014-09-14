@@ -20,17 +20,22 @@ namespace BitVectors
      * */
     public class Bits
     {
-        private List<ulong> data_;
+        private IList<ulong> data_;
         private ulong pos_ = 0;
 
         public Bits(ulong initialCapacity)
         {
             data_ = Enumerable.Repeat(0UL, (int)((initialCapacity + 63) / 64)).ToList();         
         }
+        public Bits(IList<ulong> bits)
+        {
+            data_ = bits;
+        }
 
         public Bits(BinaryReader r)
         {
             data_ = new List<ulong>();
+            pos_ = (ulong)data_.Count * 64;
             read(r);
         }
 
@@ -221,6 +226,11 @@ namespace BitVectors
             {
                 // no boundary crossing
                 ulong block = data_[leftIndexInList];
+                if (nbits == 64)
+                {
+                    Debug.Assert(offsetInList == 0);
+                    return block;
+                }
 
                 ulong mask = (1UL << nbits) - 1;
                 int maskShift = 64 - (offsetInList + nbits);
@@ -240,6 +250,11 @@ namespace BitVectors
                 );
             }
             return internalFetch64(pos, nbits);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ulong fetch64(ulong pos)
+        {
+            return internalFetch64(pos, 64);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -273,9 +288,9 @@ namespace BitVectors
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IReadOnlyList<ulong> dump()
+        public IList<ulong> dump()
         {
-            return data_.AsReadOnly();
+            return data_;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -306,16 +321,16 @@ namespace BitVectors
             pos_ = r.ReadUInt64();
 
             int size = r.ReadInt32();
-            if (size > data_.Capacity)
-            {
-                data_.Capacity = size;
-            }
+
             data_.Clear();
-            ulong x;
+            if (size > data_.Count)
+            {
+                data_.Clear();
+                data_ = new ulong[size];
+            }
             for (int i = 0; i < size; i++)
             {
-                x = r.ReadUInt64();
-                data_.Add(x);
+                data_[i] = r.ReadUInt64();
             }
             return this;
         }

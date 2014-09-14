@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BitVectors;
 using System.IO;
+using System.Collections.Generic;
 
 namespace BitVector_Test
 {
@@ -134,6 +135,19 @@ namespace BitVector_Test
             bitsClone.read(new BinaryReader(ms1));
 
             Assert.AreEqual(bits, bitsClone);
+        }
+
+        [TestMethod]
+        public void shallowConstructor()
+        {
+            ulong[] l = new ulong[] { 1UL, 1UL, 1UL };
+            Bits bits = new Bits(l);
+            Assert.IsTrue(bits.get(63UL));
+            Assert.IsTrue(bits.get(127UL));
+            Assert.IsTrue(bits.get(191UL));
+            Assert.AreEqual(bits.fetch64(0), 1UL);
+            Assert.AreEqual(bits.fetch64(64), 1UL);
+            Assert.AreEqual(bits.fetch64(128), 1UL);
         }
     }
 }

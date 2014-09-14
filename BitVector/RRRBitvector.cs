@@ -132,7 +132,7 @@ namespace BitVectors
             if (k > n) { return 0; }
             if (n == k) { return 1; } // only one way to chose when n == k
             if (k > n - k) { k = n - k; } // Everything is symmetric around n-k, so it is quicker to iterate over a smaller k than a larger one.
-//            ulong c = 1;
+
             BigInteger c = 1;
             for (int i = 1; i <= k; i++)
             {
@@ -147,7 +147,7 @@ namespace BitVectors
                 );
             }
             return (ulong)c;
-        }
+            }
         static RRRBitVector()
         {
             for (int n = 0; n <= BLOCK_SIZE; n++)
