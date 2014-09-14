@@ -183,7 +183,6 @@ namespace BitVectors
             {
                 v_.Add(reverseBits(val));
                 val = 0UL;
-14                +32/741
             }
             size_ = i*8;
             build();
