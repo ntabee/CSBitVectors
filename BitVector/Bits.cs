@@ -31,6 +31,20 @@ namespace BitVectors
         {
             data_ = bits;
         }
+        public Bits(IEnumerable<ulong> bits)
+        {
+            data_ = bits.ToList();
+        }
+        public Bits(IList<byte> bits)
+            : this(((ulong)bits.Count) * 8)
+        {
+            push(bits);
+        }
+        public Bits(IEnumerable<byte> bits)
+            : this(bits.ToList())
+        {
+
+        }
 
         public Bits(BinaryReader r)
         {
@@ -68,6 +82,41 @@ namespace BitVectors
             }
             return this;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Bits set(ulong pos)
+        {
+            int indexInList = (int)(pos / 64);
+            int offset = (int)(pos % 64);
+            ulong block = data_[indexInList];
+            ulong mask = (1UL << (63 - offset));
+            block |= mask;
+            data_[indexInList] = block;
+
+            if (pos + 1 >= pos_)
+            {
+                pos_ = pos + 1;
+            }
+            return this;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Bits unset(ulong pos)
+        {
+            int indexInList = (int)(pos / 64);
+            int offset = (int)(pos % 64);
+            ulong block = data_[indexInList];
+            ulong mask = (1UL << (63 - offset));
+            block &= ~mask;
+            data_[indexInList] = block;
+
+            if (pos + 1 >= pos_)
+            {
+                pos_ = pos + 1;
+            }
+            return this;
+        }
+
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool get(ulong pos)
         {

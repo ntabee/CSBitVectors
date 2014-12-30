@@ -138,7 +138,7 @@ namespace BitVector_Test
         }
 
         [TestMethod]
-        public void shallowConstructor()
+        public void fromULList()
         {
             ulong[] l = new ulong[] { 1UL, 1UL, 1UL };
             Bits bits = new Bits(l);
@@ -148,6 +148,55 @@ namespace BitVector_Test
             Assert.AreEqual(bits.fetch64(0), 1UL);
             Assert.AreEqual(bits.fetch64(64), 1UL);
             Assert.AreEqual(bits.fetch64(128), 1UL);
+        }
+
+        [TestMethod]
+        public void fromULEnumerable()
+        {
+            IEnumerable<ulong> l = new ulong[] { 1UL, 1UL, 1UL };
+            Bits bits = new Bits(l);
+            Assert.IsTrue(bits.get(63UL));
+            Assert.IsTrue(bits.get(127UL));
+            Assert.IsTrue(bits.get(191UL));
+            Assert.AreEqual(bits.fetch64(0), 1UL);
+            Assert.AreEqual(bits.fetch64(64), 1UL);
+            Assert.AreEqual(bits.fetch64(128), 1UL);
+        }
+        [TestMethod]
+        public void fromByteList()
+        {
+            byte[] l = new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 };
+            Bits bits = new Bits(l);
+            Assert.IsTrue(bits.get(7UL));
+            Assert.IsTrue(bits.get(15UL));
+            Assert.IsTrue(bits.get(23UL));
+
+            ulong v = l[0];
+            for (int i = 1; i < 8; i++)
+            {
+                v <<= 8;
+                v |= l[i];
+            }
+            Assert.AreEqual(bits.fetch64(0), v);
+        }
+
+        [TestMethod]
+        public void fromByteEnumerable()
+        {
+            byte[] l = new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 };
+            IEnumerable<byte> e = l;
+            Bits bits = new Bits(e);
+            Assert.IsTrue(bits.get(7UL));
+            Assert.IsTrue(bits.get(15UL));
+            Assert.IsTrue(bits.get(23UL));
+
+            ulong v = l[0];
+            for (int i = 1; i < 8; i++)
+            {
+                v <<= 8;
+                v |= l[i];
+            }
+            Assert.AreEqual(bits.fetch64(0), v);
         }
     }
 }
