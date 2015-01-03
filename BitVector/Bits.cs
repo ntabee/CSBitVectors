@@ -38,7 +38,34 @@ namespace BitVectors
         public Bits(IList<byte> bits)
             : this(((ulong)bits.Count) * 8)
         {
-            push(bits);
+//            push(bits);
+            int C = bits.Count;
+            int N = C / 8;
+            int R = C % 8;
+            Parallel.For(0, N, (i) =>
+            {
+                int k = i*8;
+                ulong v = bits[k];
+                v <<= 8;
+                v |= bits[k + 1];
+                v <<= 8;
+                v |= bits[k + 2];
+                v <<= 8;
+                v |= bits[k + 3];
+                v <<= 8;
+                v |= bits[k + 4];
+                v <<= 8;
+                v |= bits[k + 5];
+                v <<= 8;
+                v |= bits[k + 6];
+                v <<= 8;
+                v |= bits[k + 7];
+                data_[i] = v;
+            });
+            pos_ = (ulong)N * 64UL;
+            for (int i=C-R; i<C; i++) {
+                push(bits[i], 8);
+            }
         }
         public Bits(IEnumerable<byte> bits)
             : this(bits.ToList())

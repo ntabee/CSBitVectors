@@ -165,11 +165,12 @@ namespace BitVector_Test
         [TestMethod]
         public void fromByteList()
         {
-            byte[] l = new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 };
+            byte[] l = new byte[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
             Bits bits = new Bits(l);
             Assert.IsTrue(bits.get(7UL));
             Assert.IsTrue(bits.get(15UL));
             Assert.IsTrue(bits.get(23UL));
+            Assert.IsTrue(bits.get(71UL));
 
             ulong v = l[0];
             for (int i = 1; i < 8; i++)

@@ -238,7 +238,7 @@ namespace BitVector_Test
 
             rrr.write(w1);
 
-            Console.WriteLine(string.Format("The length of randomely generated bit-vector of length {0} = {1} bytes", rrr.size(), ms1.Length));
+            Console.WriteLine(string.Format("The length of randomly generated bit-vector of length {0} = {1} bytes", rrr.size(), ms1.Length));
 
             ms1.Seek(0, SeekOrigin.Begin);
             RRRBitVector rrr2 = new RRRBitVector(new BinaryReader(ms1));
