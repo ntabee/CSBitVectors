@@ -134,8 +134,10 @@ namespace BitVectors
             if (k > n - k) { k = n - k; } // Everything is symmetric around n-k, so it is quicker to iterate over a smaller k than a larger one.
 
             BigInteger c = 1;
+            
             for (int i = 1; i <= k; i++)
             {
+                
                 c *= (ulong)n;
                 n--;
                 c /= (ulong)i;
@@ -238,8 +240,8 @@ namespace BitVectors
             ulong nBlocks = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
             ulong nSuperBlocks = (size + SUPERBLOCK_SIZE -1) / SUPERBLOCK_SIZE;
 
-            Bits classValues = new Bits(BITS_PER_CLASS * nBlocks);
-            Bits offsetValues = new Bits((ulong)MAX_BITS_PER_OFFSET * nBlocks);
+            Bits classValues = Bits.ofFixedLength(BITS_PER_CLASS * nBlocks);
+            Bits offsetValues = Bits.ofFixedLength((ulong)MAX_BITS_PER_OFFSET * nBlocks);
             EliasFanoSequence rankSamples = new EliasFanoSequence(nSuperBlocks, size);
             EliasFanoSequence offsetPosSamples = new EliasFanoSequence(nSuperBlocks, size);
 

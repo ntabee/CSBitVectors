@@ -86,6 +86,11 @@ namespace BitVectors
             read(filename);
         }
 
+        public static Bits ofFixedLength(ulong len)
+        {
+            return new Bits(new ulong[(int)((len + 63) / 64)]);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Bits set(ulong pos, bool b)
         {
@@ -398,10 +403,8 @@ namespace BitVectors
 
             int size = r.ReadInt32();
 
-            data_.Clear();
             if (size > data_.Count)
             {
-                data_.Clear();
                 data_ = new ulong[size];
             }
             for (int i = 0; i < size; i++)

@@ -82,7 +82,7 @@ namespace BitVectors
             LOW_BITS_MASK = (1UL << NUM_LOW_BITS) - 1;
 
             ulong numLowBits = length * (uint)NUM_LOW_BITS;
-            lowBits_ = new Bits(numLowBits);
+            lowBits_ = Bits.ofFixedLength(numLowBits);
 
             hiBits_ = new BitVector(length);    // Give the theoretical lower bound as the initial capacity
 
@@ -196,7 +196,7 @@ namespace BitVectors
             lastVal_ = r.ReadUInt64();
 
             ulong numLowBits = pos_ * (uint)NUM_LOW_BITS;
-            lowBits_ = new Bits(numLowBits);
+            lowBits_ = Bits.ofFixedLength(numLowBits);
 
             hiBits_ = new BitVector(pos_);    // Give the theoretical lower bound as the initial capacity
 
