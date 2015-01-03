@@ -279,20 +279,21 @@ namespace BitVectors
                 ); 
             }
 
+            var r = this.r_;
             int left = 0;
-            int right = r_.Count;
+            int right = r.Count;
             while (left < right)
             {
                 int pivot = (left + right) >> 1; // / 2;
-                ulong rank = r_[pivot];
+                ulong rank = r[pivot];
                 if (!b) { rank = ((ulong)pivot * LARGE_BLOCK_SIZE) - rank; }
                 if (i < rank) { right = pivot; }
                 else { left = pivot + 1; }
             }
             right--;
 
-            if (b) { i -= r_[right]; }
-            else { i -= (ulong)right * LARGE_BLOCK_SIZE - r_[right]; }
+            if (b) { i -= r[right]; }
+            else { i -= (ulong)right * LARGE_BLOCK_SIZE - r[right]; }
             int j = right * BLOCK_RATE;
             while (true)
             {

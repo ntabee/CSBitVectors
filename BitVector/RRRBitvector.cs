@@ -190,13 +190,14 @@ namespace BitVectors
             {
                 return 0UL;
             }
+            ulong[][] C = RRRBitVector.C;
             ulong offset = 0;
             for (int i = BLOCK_SIZE - 1; i >= 0; i--)
             {
-                if ((v & (1UL << i)) != 0)
+                if (((v >> i) & 1) == 1)
                 {
                     offset += C[i][clazz];
-                    clazz--;
+                    --clazz;
                 }
             }
             return offset;
@@ -209,6 +210,7 @@ namespace BitVectors
             {
                 return 0UL;
             }
+            ulong[][] C = RRRBitVector.C;
             ulong v = 0UL;
             ulong c;
             int i = BLOCK_SIZE - 1;
@@ -219,13 +221,13 @@ namespace BitVectors
                 {
                     v |= (1UL << i);
                     offset -= c;
-                    clazz--;
+                    --clazz;
                     if (clazz <= 0)
                     {
                         return v;
                     }
                 }
-                i--;
+                --i;
             } while (i >= 0);
             return v;
         }
@@ -236,10 +238,10 @@ namespace BitVectors
             ulong nBlocks = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
             ulong nSuperBlocks = (size + SUPERBLOCK_SIZE -1) / SUPERBLOCK_SIZE;
 
-            classValues_ = new Bits(BITS_PER_CLASS * nBlocks);
-            offsetValues_ = new Bits((ulong)MAX_BITS_PER_OFFSET * nBlocks);
-            rankSamples_ = new EliasFanoSequence(nSuperBlocks, size);
-            offsetPosSamples_ = new EliasFanoSequence(nSuperBlocks, size);
+            Bits classValues = new Bits(BITS_PER_CLASS * nBlocks);
+            Bits offsetValues = new Bits((ulong)MAX_BITS_PER_OFFSET * nBlocks);
+            EliasFanoSequence rankSamples = new EliasFanoSequence(nSuperBlocks, size);
+            EliasFanoSequence offsetPosSamples = new EliasFanoSequence(nSuperBlocks, size);
 
             ulong rankSum = 0;
 
@@ -253,8 +255,8 @@ namespace BitVectors
                 if ((i % SUPERBLOCK_FACTOR) == 0)
                 {
                     ulong sampleIndex = i / SUPERBLOCK_FACTOR;
-                    offsetPosSamples_.push(offsetValues_.size());
-                    rankSamples_.push(rankSum);
+                    offsetPosSamples.push(offsetValues.size());
+                    rankSamples.push(rankSum);
                 }
 
                 // Step 2.  Encode each block v as a pair (class-of(v), offset-of(v))
@@ -263,10 +265,10 @@ namespace BitVectors
 
                 uint clazz = BitVector.popcount(block);
 
-                classValues_.push(clazz, BITS_PER_CLASS);
+                classValues.push(clazz, BITS_PER_CLASS);
                 
                 ulong offset = offsetOf(block, clazz);
-                offsetValues_.push(offset, (int)BITS_OF_OFFSETS_OF_CLASS[clazz]);
+                offsetValues.push(offset, (int)BITS_OF_OFFSETS_OF_CLASS[clazz]);
 
                 rankSum += clazz;
             }
@@ -274,8 +276,13 @@ namespace BitVectors
             size_ = size;
             size1_ = rankSum;
 
-            rankSamples_.build();
-            offsetPosSamples_.build();
+            rankSamples.build();
+            offsetPosSamples.build();
+
+            classValues_ = classValues;
+            offsetValues_ = offsetValues;
+            rankSamples_ = rankSamples;
+            offsetPosSamples_ = offsetPosSamples;
 
 #if DEBUG
             // Checks the correctnes of encoding
@@ -438,12 +445,13 @@ namespace BitVectors
                     string.Format("RRRBitVector.select1(): the argument {0} exceeds the total number of 1s = {1}", i, size(true))
                     );
             }
+            var rankSamples = this.rankSamples_;
             ulong left = 0;
-            ulong right = rankSamples_.size() - 1;
+            ulong right = rankSamples.size() - 1;
             while (left < right)
             {
                 ulong pivot = (left + right) >>1; // / 2;
-                ulong rankAtThePivot = rankSamples_.get(pivot);
+                ulong rankAtThePivot = rankSamples.get(pivot);
                 if (i < rankAtThePivot) 
                 { 
                     right = pivot; 
@@ -456,8 +464,8 @@ namespace BitVectors
             right--;
 
             ulong j = right * SUPERBLOCK_FACTOR;
-            ulong rank = rankSamples_.get(right);
-            ulong delta = rankSamples_.get(right+1) - rank;
+            ulong rank = rankSamples.get(right);
+            ulong delta = rankSamples.get(right+1) - rank;
             if (delta == SUPERBLOCK_SIZE)
             {
                 // every bit in the left-th super-block is 1
