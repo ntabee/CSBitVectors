@@ -118,7 +118,7 @@ namespace BitVectors
         private EliasFanoSequence rankSamples_;
         private EliasFanoSequence offsetPosSamples_;
 
-        // C[n][m] holds C(n, m).  We define C(0, m) = C(n, 0) = 0 for all m, n
+        // C[n][m] holds C(n, m).  We define C(0, m) = 0, C(n, 0) = 1 for all m, n
         private static ulong[][] C = new ulong[BLOCK_SIZE + 1][];
 
         // holds log2(C(t, n)) n = 0, ..., t 
@@ -129,20 +129,21 @@ namespace BitVectors
             ulong[][] C = RRRBitVector.C;
             for (int n = 0; n <= BLOCK_SIZE; n++)
             {
-                C[n] = new ulong[BLOCK_SIZE + 1];
+                C[n] = new ulong[n + 2];
                 C[n][0] = 1;
             }
-            for (int m = 1; m <= BLOCK_SIZE; m++)
-            {
-                C[0][m] = 0;
-            }
+            //for (int m = 1; m <= BLOCK_SIZE; m++)
+            //{
+            //    C[0][m] = 0;
+            //}
 
             for (int n = 1; n <= BLOCK_SIZE; n++)
             {
-                for (int k = 1; k <= BLOCK_SIZE; k++)
+                for (int k = 1; k <= n; k++)
                 {
                     C[n][k] = C[n - 1][k - 1] + C[n - 1][k];
                 }
+                C[n][n+1] = 0;
             }
 
             for (int n = 0; n <= BLOCK_SIZE; n++)
@@ -176,16 +177,17 @@ namespace BitVectors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong offsetOf(ulong v, uint clazz)
         {
-            if (clazz == 0)
+            if (clazz == 0 || clazz == BLOCK_SIZE)
             {
                 return 0UL;
             }
             ulong[][] C = RRRBitVector.C;
             ulong offset = 0;
-            for (int i = BLOCK_SIZE - 1; i >= 0; i--)
+            for (int i = BLOCK_SIZE - 1; i > 0; i--)
             {
                 if (((v >> i) & 1) == 1)
                 {
+                    Debug.Assert(i >= clazz);
                     offset += C[i][clazz];
                     --clazz;
                 }

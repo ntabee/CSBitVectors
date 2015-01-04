@@ -35,7 +35,7 @@ namespace BitVector_Test
             ulong[][] C = (ulong[][])pt.GetStaticField("C");
             for (int n = 0; n < C.Length; n++)
             {
-                for (int m = 0; m < C.Length; m++)
+                for (int m = 0; m <= n; m++)
                 {
                     Assert.AreEqual(C[n][m], biCoefficient((ulong)n, (ulong)m));
                 }
