@@ -94,7 +94,7 @@ namespace BitVectors
         {
             return new Bits(new ulong[(int)((len + 63) / 64)]);
         }
-        public static Bits ofFixedContents(IList<byte> bits)
+        public static Bits ofFixedLength(IList<byte> bits)
         {
             Bits b = Bits.ofFixedLength((ulong)bits.Count * 8);
             b.fill(bits);
