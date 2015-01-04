@@ -187,7 +187,6 @@ namespace BitVectors
             {
                 if (((v >> i) & 1) == 1)
                 {
-                    Debug.Assert(i >= clazz);
                     offset += C[i][clazz];
                     --clazz;
                 }
