@@ -14,9 +14,6 @@ namespace BitVector_Test
         // reference impl.
         static ulong biCoefficient(ulong n, ulong k)
         {
-            if (n == 0 || k == 0)
-                return 0;
-
             if (k > n - k)
             {
                 k = n - k;

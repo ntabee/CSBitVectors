@@ -124,42 +124,30 @@ namespace BitVectors
         // holds log2(C(t, n)) n = 0, ..., t 
         private static uint[] BITS_OF_OFFSETS_OF_CLASS = new uint[BLOCK_SIZE+1];
 
-        // cf. http://stackoverflow.com/questions/12983731/algorithm-for-calculating-binomial-coefficient
-        public static ulong BinomialCoefficient(int n, int k)
-        {
-            if (k == 0) { return 0; }
-            if (n == 0) { return 0; }
-            if (k > n) { return 0; }
-            if (n == k) { return 1; } // only one way to chose when n == k
-            if (k > n - k) { k = n - k; } // Everything is symmetric around n-k, so it is quicker to iterate over a smaller k than a larger one.
-
-            BigInteger c = 1;
-            
-            for (int i = 1; i <= k; i++)
-            {
-                
-                c *= (ulong)n;
-                n--;
-                c /= (ulong)i;
-            }
-            if (c > ulong.MaxValue)
-            {
-                throw new ArgumentOutOfRangeException(
-                    string.Format("C({0}, {1}) = {2} is too large to be an ulong.", n, k, c.ToString())
-                );
-            }
-            return (ulong)c;
-            }
         static RRRBitVector()
         {
+            ulong[][] C = RRRBitVector.C;
             for (int n = 0; n <= BLOCK_SIZE; n++)
             {
-                C[n] = new ulong[BLOCK_SIZE+1];
-                for (int m = 0; m <= n; m++)
+                C[n] = new ulong[BLOCK_SIZE + 1];
+                C[n][0] = 1;
+            }
+            for (int m = 1; m <= BLOCK_SIZE; m++)
+            {
+                C[0][m] = 0;
+            }
+
+            for (int n = 1; n <= BLOCK_SIZE; n++)
+            {
+                for (int k = 1; k <= BLOCK_SIZE; k++)
                 {
-                    C[n][m] = BinomialCoefficient(n, m);
+                    C[n][k] = C[n - 1][k - 1] + C[n - 1][k];
                 }
-                ulong elementsInTheClass = BinomialCoefficient(BLOCK_SIZE, n);
+            }
+
+            for (int n = 0; n <= BLOCK_SIZE; n++)
+            {
+                ulong elementsInTheClass = C[BLOCK_SIZE][n];
                 uint bits = (uint)Math.Ceiling(Math.Log(elementsInTheClass+1, 2));
                 BITS_OF_OFFSETS_OF_CLASS[n] = bits;
                 MAX_BITS_PER_OFFSET = Math.Max(MAX_BITS_PER_OFFSET, bits);
