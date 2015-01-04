@@ -35,16 +35,38 @@ namespace BitVectors
         {
             data_ = bits.ToList();
         }
+
         public Bits(IList<byte> bits)
             : this(((ulong)bits.Count) * 8)
         {
-//            push(bits);
+            fill(bits);
+        }
+        public Bits(IEnumerable<byte> bits)
+            : this(bits.ToList())
+        {
+        }
+
+        public Bits(BinaryReader r)
+        {
+            data_ = new List<ulong>();
+            pos_ = (ulong)data_.Count * 64;
+            read(r);
+        }
+
+        public Bits(string filename)
+        {
+            data_ = new List<ulong>();
+            read(filename);
+        }
+
+        private void fill(IList<byte> bits)
+        {
             int C = bits.Count;
             int N = C / 8;
             int R = C % 8;
             Parallel.For(0, N, (i) =>
             {
-                int k = i*8;
+                int k = i * 8;
                 ulong v = bits[k];
                 v <<= 8;
                 v |= bits[k + 1];
@@ -63,32 +85,20 @@ namespace BitVectors
                 data_[i] = v;
             });
             pos_ = (ulong)N * 64UL;
-            for (int i=C-R; i<C; i++) {
+            for (int i = C - R; i < C; i++)
+            {
                 push(bits[i], 8);
             }
         }
-        public Bits(IEnumerable<byte> bits)
-            : this(bits.ToList())
-        {
-
-        }
-
-        public Bits(BinaryReader r)
-        {
-            data_ = new List<ulong>();
-            pos_ = (ulong)data_.Count * 64;
-            read(r);
-        }
-
-        public Bits(string filename)
-        {
-            data_ = new List<ulong>();
-            read(filename);
-        }
-
         public static Bits ofFixedLength(ulong len)
         {
             return new Bits(new ulong[(int)((len + 63) / 64)]);
+        }
+        public static Bits ofFixedContents(IList<byte> bits)
+        {
+            Bits b = Bits.ofFixedLength((ulong)bits.Count * 8);
+            b.fill(bits);
+            return b;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
